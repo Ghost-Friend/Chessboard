@@ -1,0 +1,10 @@
+- Create schematic
+- README:
+    - Hardware requirements
+    - required libraries
+    - link to schematic
+- Hardware testing
+- Build final board
+- INTERPRETER
+    - FIGURE SOMETHING OUT FOR EN PASSANT
+    - FIX CASTLE BUG

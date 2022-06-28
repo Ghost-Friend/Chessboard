@@ -1,0 +1,1 @@
+The code loaded onto the chessboard generates raw coordinates (0-63) and castling marks, an example of which can be seen in the first part of "Sample Game.txt". This python script takes this raw data and converts it into PGN chess notation (appended to the bottom of the data file), which can be pasted into any digital chess analysis tool.
