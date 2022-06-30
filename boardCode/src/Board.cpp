@@ -81,28 +81,28 @@ void loop()
     { // White Short Castling
       if (cent.digitalRead(5) == 1 && cent.digitalRead(6) == 1)
       {
-        file.print("O-O,");
+        file.print("100,");
       }
     }
     else if (coord1 == 60 && coord2 == 63) // Black Short Castling
     {
       if (cent.digitalRead(61) == 1 && cent.digitalRead(62) == 1)
       {
-        file.print("O-O,");
+        file.print("100,");
       }
     }
     else if (coord1 == 4 && coord2 == 0) // White Long Castling
     {
       if (cent.digitalRead(2) == 1 && cent.digitalRead(3) == 1)
       {
-        file.print("O-O-O,");
+        file.print("1000,");
       }
     }
     else if (coord1 == 60 && coord2 == 56) // Black Long Castling
     {
       if (cent.digitalRead(58) == 1 && cent.digitalRead(59) == 1)
       {
-        file.print("O-O-O,");
+        file.print("1000,");
       }
     }
     else

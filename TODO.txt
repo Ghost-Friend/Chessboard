@@ -3,8 +3,9 @@
     - Hardware requirements
     - required libraries
     - link to schematic
-- Hardware testing
+- Hardware testing (RENUMBER SQUARES BEFORE WIRING)
 - Build final board
 - INTERPRETER
     - FIGURE SOMETHING OUT FOR EN PASSANT
-    - FIX CASTLE BUG
+    - added A-H file coord to pieces for cases with >1 options, but have not added 1-8 rank coord for same condition
+    - Turn all these big repeated chunks into functions finally
