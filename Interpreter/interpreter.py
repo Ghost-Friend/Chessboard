@@ -1,222 +1,191 @@
-# Replace sample directory with game file directory
-file = open(
-    "Interpreter/sample.txt", "r")
-# file.write("\n\n\nPGN:\n")
-print("File opened\n")
+# Python script for translating raw data from Board.cpp into PGN notation for chess analysis
 
-coords = ""
-pgn = ""
-i = 0
-moveNum = 1
-board = [
-    2, 3, 4, 5, 6, 4, 3, 2,
-    1, 1, 1, 1, 1, 1, 1, 1,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    0, 0, 0, 0, 0, 0, 0, 0,
-    1, 1, 1, 1, 1, 1, 1, 1,
-    2, 3, 4, 5, 6, 4, 3, 2
-]
-# Board indices
-# board = [
-#     0, 1, 2, 3, 4, 5, 6, 7,
-#     8, 9, 10, 11, 12, 13, 14, 15,
-#     16, 17, 18, 19, 20, 21, 22, 23,
-#     24, 25, 26, 27, 28, 29, 30, 31,
-#     32, 33, 34, 35, 36, 37, 38, 39,
-#     40, 41, 42, 43, 44, 45, 46, 47,
-#     48, 49, 50, 51, 52, 53, 54, 55,
-#     56, 57, 58, 59, 60, 61, 62, 63
-# ]
-rawmoves = file.read().split(",")
-rawmoves.pop(len(rawmoves)-1)  # Removes last empty element
+import os
+import time
 
-print(rawmoves)
-print()
-while i < (len(rawmoves)-1):
-    take = False
-    pawnCheck = False
 
-    if(moveNum % 1 == 0):
-        pgn += (str(int(moveNum)) + ". ")
-
-    if(rawmoves[i] == '100'):
-        pgn += "O-O "
-        if(moveNum % 1 == 0):
-            board[60] = 0
-            board[63] = 0
-            board[62] = 3
-            board[61] = 2
-        else:
-            board[4] = 0
-            board[7] = 0
-            board[6] = 3
-            board[5] = 2
-        i += 1
-        moveNum += 0.5
-    elif(rawmoves[i] == "1000"):
-        pgn += "O-O-O "
-        if(moveNum % 1 == 0):
-            board[60] = 0
-            board[56] = 0
-            board[58] = 3
-            board[59] = 2
-        else:
-            board[4] = 0
-            board[0] = 0
-            board[2] = 3
-            board[3] = 2
-        i += 1
-        moveNum += 0.5
+def fileCheck(index, f2):
+    if(index == '0' or index == '8' or index == '16' or index == '24' or index == '32' or index == '40' or index == '48' or index == '56'):
+        f2.write("a")
+    elif(index == '1' or index == '9' or index == '17' or index == '25' or index == '33' or index == '41' or index == '49' or index == '57'):
+        f2.write("b")
+    elif(index == '2' or index == '10' or index == '18' or index == '26' or index == '34' or index == '42' or index == '50' or index == '58'):
+        f2.write("c")
+    elif(index == '3' or index == '11' or index == '19' or index == '27' or index == '35' or index == '43' or index == '51' or index == '59'):
+        f2.write("d")
+    elif(index == '4' or index == '12' or index == '20' or index == '28' or index == '36' or index == '44' or index == '52' or index == '60'):
+        f2.write("e")
+    elif(index == '5' or index == '13' or index == '21' or index == '29' or index == '37' or index == '45' or index == '53' or index == '61'):
+        f2.write("f")
+    elif(index == '6' or index == '14' or index == '22' or index == '30' or index == '38' or index == '46' or index == '54' or index == '62'):
+        f2.write("g")
+    elif(index == '7' or index == '15' or index == '23' or index == '31' or index == '39' or index == '47' or index == '55' or index == '63'):
+        f2.write("h")
     else:
-        # this check happens before increment to allow for inline board updates
-        try:
-            if (board[int(rawmoves[i+1])] != 0):
+        f2.write("ERR fileCheck")
+        print("ERR fileCheck")
+
+
+def rankCheck(index, f2):
+    if(int(index) >= 0 and int(index) <= 7):
+        f2.write("8")
+    elif(int(index) >= 8 and int(index) <= 15):
+        f2.write("7")
+    elif(int(index) >= 16 and int(index) <= 23):
+        f2.write("6")
+    elif(int(index) >= 24 and int(index) <= 31):
+        f2.write("5")
+    elif(int(index) >= 32 and int(index) <= 39):
+        f2.write("4")
+    elif(int(index) >= 40 and int(index) <= 47):
+        f2.write("3")
+    elif(int(index) >= 48 and int(index) <= 55):
+        f2.write("2")
+    elif(int(index) >= 56 and int(index) <= 63):
+        f2.write("1")
+    else:
+        f2.write("ERR rankCheck")
+        print("ERR rankCheck")
+
+
+def main():
+    # file content
+    # replace sample directory with game file directory
+    file = open("Interpreter/sampleFiles/sample.txt", "r")
+    print("File opened for reading\n")
+    data = file.read()
+    print("Data Collected:\n" + data + "\n")
+    f2 = open("./Interpreter/Games/" +
+              str(time.ctime(os.path.getctime(file.name)))+".pgn", "w")
+    print("New file created:" + f2.name + "\n")
+    file.close()
+
+    f2.write("Game Timestamp: " +  # You can edit this section but leave the \n symbols for formatting purposes
+             str(time.ctime(os.path.getctime(file.name))) + "\n")
+    f2.write("White: \n")
+    f2.write("Black: \n")
+    f2.write("Special notes: \n\n\n")
+
+    # init vars
+    i = 0
+    moveNum = 1
+    board = [  # From white's perspective, edit this array to change initial board state
+        2, 3, 4, 5, 6, 4, 3, 2,
+        1, 1, 1, 1, 1, 1, 1, 1,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        0, 0, 0, 0, 0, 0, 0, 0,
+        1, 1, 1, 1, 1, 1, 1, 1,
+        2, 3, 4, 5, 6, 4, 3, 2
+    ]
+    rawMoves = data.split(",")
+    rawMoves.pop(len(rawMoves)-1)  # removes last empty element
+
+    # main loop
+    while i < (len(rawMoves)-1):
+        take = False
+        pawn = False
+        enPassant = False
+
+        if moveNum % 1 == 0:
+            f2.write(str(int(moveNum))+". ")
+
+        # Castling
+        if(rawMoves[i] == '100'):
+            f2.write("O-O ")
+            if(moveNum % 1 == 0):
+                board[60] = 0
+                board[63] = 0
+                board[62] = 3
+                board[61] = 2
+            else:
+                board[4] = 0
+                board[7] = 0
+                board[6] = 3
+                board[5] = 2
+            i += 1
+            moveNum += 0.5  # 0.5 increment differentiates between white/black for move printing
+        elif(rawMoves[i] == "1000"):
+            f2.write("O-O-O ")
+            if(moveNum % 1 == 0):
+                board[60] = 0
+                board[56] = 0
+                board[58] = 3
+                board[59] = 2
+            else:
+                board[4] = 0
+                board[0] = 0
+                board[2] = 3
+                board[3] = 2
+            i += 1
+            moveNum += 0.5
+        else:
+            # this check happens before increment to allow for inline board updates
+            if (board[int(rawMoves[i+1])] != 0):
                 take = True
-        except:
-            pass
+            elif ((board[int(rawMoves[i])] == 1) and ((int(rawMoves[i])+8) != int(rawMoves[i+1])) and ((int(rawMoves[i])-8) != int(rawMoves[i+1])) and ((int(rawMoves[i])+16) != int(rawMoves[i+1])) and ((int(rawMoves[i])-16) != int(rawMoves[i+1])) and (board[int(rawMoves[i+1])] == 0)):
+                enPassant = True
+                take = True
 
-        #pawn or piece
-        # if pawn, need to decide which one it is (File designation)
-        if(board[int(rawmoves[i])] == 1):
-            pawnCheck = True
-            if(rawmoves[i] == '0' or rawmoves[i] == '8' or rawmoves[i] == '16' or rawmoves[i] == '24' or rawmoves[i] == '32' or rawmoves[i] == '40' or rawmoves[i] == '48' or rawmoves[i] == '56'):
-                pgn += "a"
-            elif(rawmoves[i] == '1' or rawmoves[i] == '9' or rawmoves[i] == '17' or rawmoves[i] == '25' or rawmoves[i] == '33' or rawmoves[i] == '41' or rawmoves[i] == '49' or rawmoves[i] == '57'):
-                pgn += "b"
-            elif(rawmoves[i] == '2' or rawmoves[i] == '10' or rawmoves[i] == '18' or rawmoves[i] == '26' or rawmoves[i] == '34' or rawmoves[i] == '42' or rawmoves[i] == '50' or rawmoves[i] == '58'):
-                pgn += "c"
-            elif(rawmoves[i] == '3' or rawmoves[i] == '11' or rawmoves[i] == '19' or rawmoves[i] == '27' or rawmoves[i] == '35' or rawmoves[i] == '43' or rawmoves[i] == '51' or rawmoves[i] == '59'):
-                pgn += "d"
-            elif(rawmoves[i] == '4' or rawmoves[i] == '12' or rawmoves[i] == '20' or rawmoves[i] == '28' or rawmoves[i] == '36' or rawmoves[i] == '44' or rawmoves[i] == '52' or rawmoves[i] == '60'):
-                pgn += "e"
-            elif(rawmoves[i] == '5' or rawmoves[i] == '13' or rawmoves[i] == '21' or rawmoves[i] == '29' or rawmoves[i] == '37' or rawmoves[i] == '45' or rawmoves[i] == '53' or rawmoves[i] == '61'):
-                pgn += "f"
-            elif(rawmoves[i] == '6' or rawmoves[i] == '14' or rawmoves[i] == '22' or rawmoves[i] == '30' or rawmoves[i] == '38' or rawmoves[i] == '46' or rawmoves[i] == '54' or rawmoves[i] == '62'):
-                pgn += "g"
-            elif(rawmoves[i] == '7' or rawmoves[i] == '15' or rawmoves[i] == '23' or rawmoves[i] == '31' or rawmoves[i] == '39' or rawmoves[i] == '47' or rawmoves[i] == '55' or rawmoves[i] == '63'):
-                pgn += "h"
+            # Piece or Pawn
+            if board[int(rawMoves[i])] == 1:
+                pawn = True
+                fileCheck(rawMoves[i], f2)
+                board[int(rawMoves[i])] = 0
+                board[int(rawMoves[i+1])] = 1
+                if enPassant == True:
+                    if int(rawMoves[i]) > int(rawMoves[i+1]):
+                        board[int(rawMoves[i+1])+8] = 0
+                    elif int(rawMoves[i]) < int(rawMoves[i+1]):
+                        board[int(rawMoves[i+1])-8] = 0
             else:
-                pgn += "ERR101!"
-            board[int(rawmoves[i])] = 0
-            board[int(rawmoves[i+1])] = 1
-        else:
-            if(board[int(rawmoves[i])] == 2):
-                pgn += "R"
-                board[int(rawmoves[i])] = 0
-                board[int(rawmoves[i+1])] = 2
-            elif(board[int(rawmoves[i])] == 3):
-                pgn += "N"
-                board[int(rawmoves[i])] = 0
-                board[int(rawmoves[i+1])] = 3
-            elif(board[int(rawmoves[i])] == 4):
-                pgn += "B"
-                board[int(rawmoves[i])] = 0
-                board[int(rawmoves[i+1])] = 4
-            elif(board[int(rawmoves[i])] == 5):
-                pgn += "Q"
-                board[int(rawmoves[i])] = 0
-                board[int(rawmoves[i+1])] = 5
-            elif(board[int(rawmoves[i])] == 6):
-                pgn += "K"
-                board[int(rawmoves[i])] = 0
-                board[int(rawmoves[i+1])] = 6
+                if(board[int(rawMoves[i])] == 2):
+                    f2.write("R")
+                    board[int(rawMoves[i])] = 0
+                    board[int(rawMoves[i+1])] = 2
+                elif(board[int(rawMoves[i])] == 3):
+                    f2.write("N")
+                    board[int(rawMoves[i])] = 0
+                    board[int(rawMoves[i+1])] = 3
+                elif(board[int(rawMoves[i])] == 4):
+                    f2.write("B")
+                    board[int(rawMoves[i])] = 0
+                    board[int(rawMoves[i+1])] = 4
+                elif(board[int(rawMoves[i])] == 5):
+                    f2.write("Q")
+                    board[int(rawMoves[i])] = 0
+                    board[int(rawMoves[i+1])] = 5
+                elif(board[int(rawMoves[i])] == 6):
+                    f2.write("K")
+                    board[int(rawMoves[i])] = 0
+                    board[int(rawMoves[i+1])] = 6
+                else:
+                    f2.write("ERR pieceName")
+                    print("ERR pieceName")
+
+            # Extended PGN notation for cases with >1 same-name piece option
+            if pawn == True:
+                pass
             else:
-                pgn += "ERR126!"
+                fileCheck(rawMoves[i], f2)
+                rankCheck(rawMoves[i], f2)
+            i += 1  # move to coord2 to find piece destination
 
-        # specify piece file and rank for cases with >1 option (yes the pgn interpreter accepts this)
-        if (pawnCheck == True):
-            pass
-        else:
-            if(rawmoves[i] == '0' or rawmoves[i] == '8' or rawmoves[i] == '16' or rawmoves[i] == '24' or rawmoves[i] == '32' or rawmoves[i] == '40' or rawmoves[i] == '48' or rawmoves[i] == '56'):
-                pgn += "a"
-            elif(rawmoves[i] == '1' or rawmoves[i] == '9' or rawmoves[i] == '17' or rawmoves[i] == '25' or rawmoves[i] == '33' or rawmoves[i] == '41' or rawmoves[i] == '49' or rawmoves[i] == '57'):
-                pgn += "b"
-            elif(rawmoves[i] == '2' or rawmoves[i] == '10' or rawmoves[i] == '18' or rawmoves[i] == '26' or rawmoves[i] == '34' or rawmoves[i] == '42' or rawmoves[i] == '50' or rawmoves[i] == '58'):
-                pgn += "c"
-            elif(rawmoves[i] == '3' or rawmoves[i] == '11' or rawmoves[i] == '19' or rawmoves[i] == '27' or rawmoves[i] == '35' or rawmoves[i] == '43' or rawmoves[i] == '51' or rawmoves[i] == '59'):
-                pgn += "d"
-            elif(rawmoves[i] == '4' or rawmoves[i] == '12' or rawmoves[i] == '20' or rawmoves[i] == '28' or rawmoves[i] == '36' or rawmoves[i] == '44' or rawmoves[i] == '52' or rawmoves[i] == '60'):
-                pgn += "e"
-            elif(rawmoves[i] == '5' or rawmoves[i] == '13' or rawmoves[i] == '21' or rawmoves[i] == '29' or rawmoves[i] == '37' or rawmoves[i] == '45' or rawmoves[i] == '53' or rawmoves[i] == '61'):
-                pgn += "f"
-            elif(rawmoves[i] == '6' or rawmoves[i] == '14' or rawmoves[i] == '22' or rawmoves[i] == '30' or rawmoves[i] == '38' or rawmoves[i] == '46' or rawmoves[i] == '54' or rawmoves[i] == '62'):
-                pgn += "g"
-            elif(rawmoves[i] == '7' or rawmoves[i] == '15' or rawmoves[i] == '23' or rawmoves[i] == '31' or rawmoves[i] == '39' or rawmoves[i] == '47' or rawmoves[i] == '55' or rawmoves[i] == '63'):
-                pgn += "h"
+            if take == True:
+                f2.write("x")
+
+            # destination
+            if pawn == True and take == False:
+                rankCheck(rawMoves[i], f2)
+                f2.write(" ")
             else:
-                pgn += "ERR149!"
+                fileCheck(rawMoves[i], f2)
+                rankCheck(rawMoves[i], f2)
+                f2.write(" ")
+            i += 1  # progress to next move
+            moveNum += 0.5
+    f2.close()
 
-            if(int(rawmoves[i]) >= 0 and int(rawmoves[i]) <= 7):
-                pgn += "8"
-            elif(int(rawmoves[i]) >= 8 and int(rawmoves[i]) <= 15):
-                pgn += "7"
-            elif(int(rawmoves[i]) >= 16 and int(rawmoves[i]) <= 23):
-                pgn += "6"
-            elif(int(rawmoves[i]) >= 24 and int(rawmoves[i]) <= 31):
-                pgn += "5"
-            elif(int(rawmoves[i]) >= 32 and int(rawmoves[i]) <= 39):
-                pgn += "4"
-            elif(int(rawmoves[i]) >= 40 and int(rawmoves[i]) <= 47):
-                pgn += "3"
-            elif(int(rawmoves[i]) >= 48 and int(rawmoves[i]) <= 55):
-                pgn += "2"
-            elif(int(rawmoves[i]) >= 56 and int(rawmoves[i]) <= 63):
-                pgn += "1"
-            else:
-                pgn += "ERR198!"
-        i += 1  # Now that we know what piece, move to coord2 to know where it's going
 
-        # is taking? (check occurs at top of Else)
-        if(take == True):
-            pgn += "x"
-
-        # destination
-        # File designation
-        if(pawnCheck == True and take == False):
-            pass
-        else:
-            if(rawmoves[i] == '0' or rawmoves[i] == '8' or rawmoves[i] == '16' or rawmoves[i] == '24' or rawmoves[i] == '32' or rawmoves[i] == '40' or rawmoves[i] == '48' or rawmoves[i] == '56'):
-                pgn += "a"
-            elif(rawmoves[i] == '1' or rawmoves[i] == '9' or rawmoves[i] == '17' or rawmoves[i] == '25' or rawmoves[i] == '33' or rawmoves[i] == '41' or rawmoves[i] == '49' or rawmoves[i] == '57'):
-                pgn += "b"
-            elif(rawmoves[i] == '2' or rawmoves[i] == '10' or rawmoves[i] == '18' or rawmoves[i] == '26' or rawmoves[i] == '34' or rawmoves[i] == '42' or rawmoves[i] == '50' or rawmoves[i] == '58'):
-                pgn += "c"
-            elif(rawmoves[i] == '3' or rawmoves[i] == '11' or rawmoves[i] == '19' or rawmoves[i] == '27' or rawmoves[i] == '35' or rawmoves[i] == '43' or rawmoves[i] == '51' or rawmoves[i] == '59'):
-                pgn += "d"
-            elif(rawmoves[i] == '4' or rawmoves[i] == '12' or rawmoves[i] == '20' or rawmoves[i] == '28' or rawmoves[i] == '36' or rawmoves[i] == '44' or rawmoves[i] == '52' or rawmoves[i] == '60'):
-                pgn += "e"
-            elif(rawmoves[i] == '5' or rawmoves[i] == '13' or rawmoves[i] == '21' or rawmoves[i] == '29' or rawmoves[i] == '37' or rawmoves[i] == '45' or rawmoves[i] == '53' or rawmoves[i] == '61'):
-                pgn += "f"
-            elif(rawmoves[i] == '6' or rawmoves[i] == '14' or rawmoves[i] == '22' or rawmoves[i] == '30' or rawmoves[i] == '38' or rawmoves[i] == '46' or rawmoves[i] == '54' or rawmoves[i] == '62'):
-                pgn += "g"
-            elif(rawmoves[i] == '7' or rawmoves[i] == '15' or rawmoves[i] == '23' or rawmoves[i] == '31' or rawmoves[i] == '39' or rawmoves[i] == '47' or rawmoves[i] == '55' or rawmoves[i] == '63'):
-                pgn += "h"
-            else:
-                pgn += "ERR178!"
-
-            # Rank designation
-        if(int(rawmoves[i]) >= 0 and int(rawmoves[i]) <= 7):
-            pgn += "8 "
-        elif(int(rawmoves[i]) >= 8 and int(rawmoves[i]) <= 15):
-            pgn += "7 "
-        elif(int(rawmoves[i]) >= 16 and int(rawmoves[i]) <= 23):
-            pgn += "6 "
-        elif(int(rawmoves[i]) >= 24 and int(rawmoves[i]) <= 31):
-            pgn += "5 "
-        elif(int(rawmoves[i]) >= 32 and int(rawmoves[i]) <= 39):
-            pgn += "4 "
-        elif(int(rawmoves[i]) >= 40 and int(rawmoves[i]) <= 47):
-            pgn += "3 "
-        elif(int(rawmoves[i]) >= 48 and int(rawmoves[i]) <= 55):
-            pgn += "2 "
-        elif(int(rawmoves[i]) >= 56 and int(rawmoves[i]) <= 63):
-            pgn += "1 "
-        else:
-            pgn += "ERR198!"
-        i += 1  # progress to next move
-        moveNum += 0.5
-print("pgn: " + pgn)
-# file.write(pgn)
-file.close()
+main()

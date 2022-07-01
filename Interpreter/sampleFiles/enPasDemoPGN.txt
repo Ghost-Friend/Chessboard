@@ -1,0 +1,5 @@
+Game Generated:
+1. d4 d5 2. Nf3 c5 3. e4 h6 4. e5 f5 5. exf6 c4 6. b4 cxb3
+
+Program Generated: 
+1. d4 d5 2. Ng1f3 c5 3. e4 h6 4. e5 f5 5. exf6 c4 6. b4 cxb3 

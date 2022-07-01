@@ -6,6 +6,4 @@
 - Hardware testing (RENUMBER SQUARES BEFORE WIRING)
 - Build final board
 - INTERPRETER
-    - FIGURE SOMETHING OUT FOR EN PASSANT
-    - added A-H file coord to pieces for cases with >1 options, but have not added 1-8 rank coord for same condition
-    - Turn all these big repeated chunks into functions finally
+    - Figure out promotion
